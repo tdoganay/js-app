@@ -1,3 +1,5 @@
+import config from './config.json'
+
 const express = require('express');
 const app = express();
 
@@ -6,7 +8,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 app.use(cors({
-        origin: 'http://localhost:3000',
+        origin: ['http://localhost:3000','https://main.dowohft4k2j57.amplifyapp.com'],
         credentials: true
     }));
 
@@ -14,9 +16,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 
 const db = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "april13",
+	host: config.MYSQL_SERVER_HOSTNAME,
+	user: config.MYSQL_SERVER_USER,
+	password: config.MYSQL_SERVER_PASS,
 	database: "jsapp"
 })
 
