@@ -1,4 +1,4 @@
-import config from './config.json'
+const config = require('./config')
 
 const express = require('express');
 const app = express();
