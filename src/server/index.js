@@ -31,10 +31,10 @@ app.post('/create-user', (req,res)=> {
 });
 
 app.post('/login-user', (req,res)=> {
-	console.log(req.body);
-	db.query(`SELECT * FROM users WHERE email='${req.body.username}' AND password='${req.body.email}'`, (err,data)=> {
+	db.query(`SELECT * FROM users WHERE email='${req.body.email}' AND password='${req.body.password}'`, (err,data)=> {
 		if (err) return res.json(err);
-		return res.json({userStatus: "loggedIn"});
+		if (data.length == 0) return res.json({userStatus: "invalid"});
+		return res.json({userStatus: "loggedIn", username: data[0].username, email: data[0].email});
 	});
 });
 

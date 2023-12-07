@@ -14,7 +14,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar({onLogout}) {
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -114,7 +114,7 @@ export default function Navbar() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
+                          <a onClick={onLogout}
                             href="#"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >

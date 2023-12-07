@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, redirect } from 'react-router-dom';
  
-export default function Login() {
+export default function Login({ onLogin }) {
  
     // States for registration
     const [email, setEmail] = useState('');
@@ -33,7 +33,6 @@ export default function Login() {
             setError(true);
         } else {
             setSubmitted(true);
-            setError(false);
 
             try {
                 fetch("http://localhost:3500/login-user", {
@@ -42,22 +41,30 @@ export default function Login() {
                         body: JSON.stringify({ email: email,password: password })
                     })
                     .then(response => response.json())
-                    .then(data => console.log(data));
-                console.log("success");
-                setSuccess(true);
+                    .then(data => {
+                        const username = data.username;
+                        const email = data.email;
+                        if (data.userStatus == 'invalid') {
+                            setError(true);
+                        } else {
+                            setSuccess(true);
+                            onLogin({username, email});
+                        }
+                    });
+
             } catch (err) {
                 setError(true);
             }
         }
     };
- 
+
     // Showing success message
     const successMessage = () => {
         return (
             <div
                 className="success"
                 style={{
-                    display: submitted ? '' : 'none',
+                    display: success ? '' : 'none',
                 }}>
                 <h1>Welcome!</h1>
             </div>

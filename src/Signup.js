@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, redirect } from 'react-router-dom';
  
-export default function Signup() {
+export default function Signup({onSignup}) {
  
     // States for registration
     const [username, setUsername] = useState('');
@@ -48,9 +48,16 @@ export default function Signup() {
                         body: JSON.stringify({ username: username,email: email,password: password })
                     })
                     .then(response => response.json())
-                    .then(data => console.log(data));
-                console.log("success");
-                setSuccess(true);
+                    .then(data => {
+                        const username = data.username;
+                        const email = data.email;
+                        if (data.userStatus == 'invalid') {
+                            setError(true);
+                        } else {
+                            setSuccess(true);
+                            onSignup({username, email});
+                        }
+                    });
             } catch (err) {
                 setError(true);
             }
