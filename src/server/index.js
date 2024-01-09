@@ -42,7 +42,7 @@ app.post('/create-user', (req,res)=> {
 app.post('/auth-user', async (req,res)=> {
 	const ghCode = req.body.ghCode;
 	const ghAccessToken = req.body.ghAccessToken;
-    if (!ghAccessToken && ghCode) {
+    	if (!ghAccessToken && ghCode) {
 	    try {
 		    const ghAuth = await client.post('/login/oauth/access_token', {client_id: ghClientId, client_secret: ghClientSecret, code: ghCode}, {headers: {Accept: 'application/json'}});
 		    console.log(ghAuth.data);

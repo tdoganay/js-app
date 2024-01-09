@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 function App() {
   const navigate = useNavigate();
   const [login, setLogin] = useState(false);
+  const redirect_uri = window.location.href.includes("localhost") ? "http://localhost:3000/login" : "https://main.dowohft4k2j57.amplifyapp.com/login";
 
   function handleLogin(newState) {
     setLogin(newState);
@@ -28,7 +29,7 @@ function App() {
   return (
       <>
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-        <Navbar onLogout={handleLogout}/>
+        <Navbar onLogout={handleLogout} redirectUri={redirect_uri}/>
         <Routes>
             <Route path='/' element={<Home />}></Route>
             <Route path='/login' element={Cookies.get('ghAccessToken') ? <Navigate to="/" /> : <Login setLogin={setLogin}/>}></Route>
