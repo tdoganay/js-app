@@ -16,7 +16,7 @@ function classNames(...classes) {
 }
 
 export default function Navbar({onLogout}) {
-  const menu = Cookies.get('user') ? 
+  const menu = Cookies.get('ghUsername') ? 
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -24,7 +24,7 @@ export default function Navbar({onLogout}) {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+                        src={Cookies.get('ghPfp')}
                         alt=""
                       />
                     </Menu.Button>
@@ -73,7 +73,7 @@ export default function Navbar({onLogout}) {
                   </Transition>
                 </Menu>
               :
-                <Link to="/login" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign In</Link>
+                <a href="https://github.com/login/oauth/authorize?client_id=Iv1.e76c52da1877b77e&redirect_uri=http://localhost:3000/login" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign In</a>
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -121,6 +121,7 @@ export default function Navbar({onLogout}) {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Profile dropdown */}
+                <span className="text-white">{Cookies.get('ghUsername') ? Cookies.get('ghUsername') : ''}</span>
                 {menu}
               </div>
             </div>

@@ -1,5 +1,5 @@
 {
-  "MYSQL_SERVER_HOSTNAME": "jsapp-1.cmnla1wwswjw.us-east-2.rds.amazonaws.com",
+  "MYSQL_SERVER_HOSTNAME": "localhost",
   "MYSQL_SERVER_USER": "root",
-  "MYSQL_SERVER_PASS": "april413"
+  "MYSQL_SERVER_PASS": "april13"
 }

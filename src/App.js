@@ -1,27 +1,27 @@
 import "./index.css";
-import Home from "./Home"
-import Signup from "./Signup"
-import Login from "./Login"
-import Navbar from "./Navbar"
-import {Routes, Route, Navigate, useNavigate} from 'react-router-dom'
+import Home from "./Home";
+import Login from "./Login";
+import Navbar from "./Navbar";
+import React, { useState, useEffect } from 'react';
+import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
  
 function App() {
   const navigate = useNavigate();
+  const [login, setLogin] = useState(false);
 
-  function handleLogin(user) {
-    console.log(user);
-    Cookies.set("user", user);
-    navigate("/");
+  function handleLogin(newState) {
+    setLogin(newState);
+    navigate('/');
   }
 
   function handleLogout() {
-    Cookies.remove("user");
-    navigate("/");
-  }
-
-  function handleSignup(user) {
-    Cookies.set("user", user);
+    Cookies.remove('ghAccessToken');
+    Cookies.remove('ghUsername');
+    Cookies.remove('ghPfp');
+    Cookies.remove('ghUserUrl');
+    Cookies.remove('ghUsername');
+    Cookies.remove('ghUserReposUrl');
     navigate("/");
   }
 
@@ -30,9 +30,8 @@ function App() {
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
         <Navbar onLogout={handleLogout}/>
         <Routes>
-            <Route path='/' element={Cookies.get('user') ? <Home /> : <Navigate to="/login" />}></Route>
-            <Route path='/login' element={Cookies.get('user') ? <Navigate to="/" /> : <Login onLogin = {handleLogin} />}></Route>
-            <Route path='/signup' element={Cookies.get('user') ? <Navigate to="/" /> :<Signup onSignup = {handleSignup} />}></Route>
+            <Route path='/' element={<Home />}></Route>
+            <Route path='/login' element={Cookies.get('ghAccessToken') ? <Navigate to="/" /> : <Login setLogin={setLogin}/>}></Route>
         </Routes>
       </>
   );
