@@ -59,7 +59,7 @@ app.post('/auth-user', async (req,res)=> {
 });
 
 app.get('/', (req,res)=> {
-	return res.json("HELLO WORLD");
+	return res.json("HELLO WORLD!");
 });
 
 app.listen(3500, () => {
