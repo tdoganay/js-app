@@ -15,7 +15,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar({onLogout},{redirectUri}) {
+export default function Navbar({onLogout, redirectUri}) {
   const menu = Cookies.get('ghUsername') ? 
                 <Menu as="div" className="relative ml-3">
                   <div>
@@ -73,7 +73,7 @@ export default function Navbar({onLogout},{redirectUri}) {
                   </Transition>
                 </Menu>
               :
-                <a href={"https://github.com/login/oauth/authorize?client_id=Iv1.e76c52da1877b77e&redirect_uri=" + redirectUri} class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign In</a>
+                <a href={"https://github.com/login/oauth/authorize?client_id=" + process.env.REACT_APP_GITHUB_CLIENT_ID + "&redirect_uri=" + redirectUri} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign In</a>
 
   return (
     <Disclosure as="nav" className="bg-gray-800">

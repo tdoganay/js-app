@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# js-app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React SPA with an Express API: GitHub OAuth sign-in, cookie-based session UI, and MySQL user records. The frontend was bootstrapped with Create React App and Tailwind; the API lives in `src/server`.
 
-## Available Scripts
+A production frontend build was also deployed with **AWS Amplify** (see the Amplify URL used as an OAuth redirect).
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- GitHub OAuth login (authorization code → access token on the API)
+- Navbar that switches between Sign In and the GitHub avatar menu
+- Home view greets the authenticated GitHub username
+- MySQL `users` table for local username/email/password records
+- CORS configured for local dev and the Amplify host
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Architecture
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+Browser (CRA :3000)
+    │  GitHub OAuth redirect with ?code=
+    ▼
+Express API (:3500)  →  GitHub token endpoint + Octokit
+                     →  MySQL (jsapp.users)
+```
 
-### `npm test`
+| Path | Role |
+| --- | --- |
+| `src/App.js` | Router, login state, logout |
+| `src/Navbar.js` | Tailwind/Headless UI nav and OAuth entry |
+| `src/Login.js` | Exchanges the GitHub `code` with the API |
+| `src/Home.js` | Signed-in greeting |
+| `src/server/index.js` | Express: `/auth-user`, `/create-user` |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Prerequisites
 
-### `npm run build`
+- Node.js 18+
+- MySQL with a `jsapp` database and a `users` table:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sql
+CREATE DATABASE IF NOT EXISTS jsapp;
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- A [GitHub OAuth App](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) with callback URLs:
+  - `http://localhost:3000/login`
+  - your Amplify (or other hosted) `/login` URL, if you deploy the frontend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Setup
 
-### `npm run eject`
+1. Install the frontend and API:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
+cd src/server
+npm install
+cd ../..
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Create env files from the templates (never commit the real files):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+cp .env.example .env
+cp src/server/.env.example src/server/.env
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Set `REACT_APP_GITHUB_CLIENT_ID` in `.env` and `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` plus MySQL settings in `src/server/.env`.
 
-## Learn More
+3. Start MySQL so the API can connect.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Run
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The root `npm start` script launches the CRA dev server and nodemon for the API:
 
-### Code Splitting
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- API: [http://localhost:3500](http://localhost:3500)
 
-### Analyzing the Bundle Size
+Or run them separately:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+# terminal 1
+npm start --prefix .   # CRA (or: npx react-scripts start)
 
-### Making a Progressive Web App
+# terminal 2
+npx nodemon src/server/index.js
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+| Script | Purpose |
+| --- | --- |
+| `npm start` | CRA frontend + nodemon API |
+| `npm run build` | Production frontend build |
+| `npm test` | CRA test runner |
 
-### Advanced Configuration
+## Technologies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **React 18** (Create React App) and **React Router 6**
+- **Tailwind CSS**, **Headless UI**, **Heroicons**
+- **Express** and **cors**
+- **GitHub OAuth** via Octokit / axios
+- **MySQL** (`mysql2`)
+- **js-cookie** for client session cookies
+- **AWS Amplify** for frontend hosting
 
-### Deployment
+## Security notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+OAuth client secrets and database passwords must live in environment variables, not source control. If those values were ever committed, rotate the GitHub OAuth client secret and the MySQL password before using the app again.

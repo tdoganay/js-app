@@ -10,7 +10,7 @@ export default function Login({setLogin}) {
     const ghCode = new URLSearchParams(location.search).get('code');
 
     async function getGhAccessToken() {
-        const ghClientService = axios.create({baseURL: "http://localhost:3500", timeout: 5000,});
+        const ghClientService = axios.create({baseURL: process.env.REACT_APP_API_URL || "http://localhost:3500", timeout: 5000,});
         const { data } = await ghClientService.post('/auth-user', { ghCode: ghCode, ghAccessToken: Cookies.get('ghAccessToken') ? Cookies.get('ghAccessToken') : null });
         if (data.error) {
             console.log(data.error);
